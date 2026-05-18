@@ -4,11 +4,285 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SaaS Dashboard - Registro de Usuarios</title>
-  <link rel="stylesheet" href="style.css" />
+  
   <!-- Google Fonts para una tipografía premium -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       1. VARIABLES Y CONFIGURACIÓN BASE
+       ========================================================================== */
+    :root {
+      --bg-app: #09090b;
+      --bg-card: #141416;
+      --border-color: #27272a;
+      --text-main: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --accent-light: rgba(59, 130, 246, 0.1);
+      --success: #10b981;
+      --radius: 12px;
+      --font-sans: 'Inter', sans-serif;
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-app);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ==========================================================================
+       2. ESTRUCTURA Y DISEÑO (LAYOUT)
+       ========================================================================== */
+    .app-container {
+      width: 100%;
+      max-width: 1200px;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .app-header {
+      margin-bottom: 2.5rem;
+    }
+
+    .app-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .app-header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .app-content {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    /* Cambio a 2 columnas en pantallas medianas/grandes */
+    @media (min-width: 768px) {
+      .app-content {
+        grid-template-columns: 380px 1fr;
+        align-items: start;
+      }
+    }
+
+    /* ==========================================================================
+       3. COMPONENTES: CARDS (CONTENEDORES)
+       ========================================================================== */
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .card h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.25rem;
+    }
+
+    .card-subtitle {
+      color: var(--text-muted);
+      font-size: 0.87rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ==========================================================================
+       4. COMPONENTES: FORMULARIO
+       ========================================================================== */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .input-group label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .input-group input {
+      background-color: #09090b;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-main);
+      padding: 0.75rem 1rem;
+      font-family: inherit;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-light);
+    }
+
+    .input-group input::placeholder {
+      color: #52525b;
+    }
+
+    button[type="submit"] {
+      background-color: var(--accent);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+      margin-top: 0.5rem;
+    }
+
+    button[type="submit"]:hover {
+      background-color: var(--accent-hover);
+    }
+
+    button[type="submit"]:disabled {
+      background-color: var(--border-color);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    .icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ==========================================================================
+       5. COMPONENTES: TABLA Y BADGES
+       ========================================================================== */
+    .table-card {
+      padding: 0; /* Permite que la tabla toque los bordes laterales */
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 1.5rem 1.75rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .badge {
+      background-color: #1e1b4b;
+      color: #6366f1;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background-color: rgba(255, 255, 255, 0.02);
+      color: var(--text-muted);
+      font-weight: 500;
+      padding: 1rem 1.75rem;
+      border-bottom: 1px solid var(--border-color);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    td {
+      padding: 1rem 1.75rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background-color: rgba(255, 255, 255, 0.01);
+    }
+
+    td:first-child, th:first-child {
+      color: var(--text-muted);
+      font-family: monospace;
+    }
+
+    /* ==========================================================================
+       6. ESTADOS DE CARGA (LOADING)
+       ========================================================================== */
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      gap: 1rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 2.5px solid var(--border-color);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
 
@@ -62,7 +336,7 @@
                 </tr>
               </thead>
               <tbody id="usuariosTabla">
-                <!-- Se rellena dinámicamente -->
+                <!-- Se rellena dinámicamente mediante JS -->
               </tbody>
             </table>
           </div>
@@ -76,17 +350,132 @@
     </main>
   </div>
 
-  <!-- Scripts -->
+  <!-- CDN Oficial de la librería de Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js"></script>
+
+  <script>
+    // ==========================================================================
+    // CONFIGURACIÓN DE SUPABASE (REEMPLAZA CON TUS DATOS)
+    // ==========================================================================
+    const SUPABASE_URL = 'TU_SUPABASE_URL';
+    const SUPABASE_ANON_KEY = 'TU_SUPABASE_ANON_KEY';
+
+    // Inicializar cliente de Supabase
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ELEMENTOS DEL DOM
+    const registroForm = document.getElementById('registroForm');
+    const usuariosTabla = document.getElementById('usuariosTabla');
+    const userCountBadge = document.getElementById('userCount');
+    const loadingState = document.getElementById('loadingState');
+    const btnSubmit = document.getElementById('btnSubmit');
+
+    // ==========================================================================
+    // LÓGICA PRINCIPAL: OBTENER Y PINTAR USUARIOS
+    // ==========================================================================
+    async function obtenerUsuarios() {
+      mostrarLoading(true);
+      
+      try {
+        const { data: usuarios, error } = await supabaseClient
+          .from('usuarios')
+          .select('*')
+          .order('id', { ascending: false }); // Los más recientes arriba
+
+        if (error) throw error;
+
+        // Limpiar filas previas
+        usuariosTabla.innerHTML = '';
+
+        // Actualizar contador del Badge
+        userCountBadge.textContent = `${usuarios.length} usuario${usuarios.length === 1 ? '' : 's'}`;
+
+        // Si la tabla está vacía
+        if (usuarios.length === 0) {
+          usuariosTabla.innerHTML = `
+            <tr>
+              <td colspan="3" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                No hay usuarios registrados todavía.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        // Construir e insertar filas de manera segura
+        usuarios.forEach(usuario => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>#${usuario.id}</td>
+            <td style="font-weight: 500;">${escapeHTML(usuario.nombre)}</td>
+            <td style="color: var(--text-muted);">${escapeHTML(usuario.email)}</td>
+          `;
+          usuariosTabla.appendChild(row);
+        });
+
+      } catch (error) {
+        console.error('Error al obtener usuarios:', error.message);
+        alert('Error al conectar con Supabase. Verifica tus credenciales de la base de datos.');
+      } finally {
+        mostrarLoading(false);
+      }
+    }
+
+    // ==========================================================================
+    // EVENTO: GUARDAR NUEVO USUARIO
+    // ==========================================================================
+    registroForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Bloquear botón y mostrar feedback visual
+      btnSubmit.disabled = true;
+      const originalBtnContent = btnSubmit.innerHTML;
+      btnSubmit.innerHTML = '<span>Guardando...</span> <div class="spinner" style="width:14px; height:14px; border-width:2px;"></div>';
+
+      const nombre = document.getElementById('nombre').value.trim();
+      const email = document.getElementById('email').value.trim();
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('usuarios')
+          .insert([{ nombre, email }]);
+
+        if (error) throw error;
+
+        // Resetear campos y actualizar la tabla inmediatamente
+        registroForm.reset();
+        await obtenerUsuarios();
+
+      } catch (error) {
+        console.error('Error al insertar usuario:', error.message);
+        alert('No se pudo guardar el usuario. Asegúrate de tener las políticas RLS activadas.');
+      } finally {
+        // Restaurar estado del botón
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = originalBtnContent;
+      }
+    });
+
+    // ==========================================================================
+    // FUNCIONES AUXILIARES (UTILS)
+    // ==========================================================================
+    function mostrarLoading(isLoading) {
+      if (isLoading) {
+        loadingState.classList.remove('hidden');
+      } else {
+        loadingState.classList.add('hidden');
+      }
+    }
+
+    // Limpieza de inputs para evitar ataques de inyección XSS (Seguridad)
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+      );
+    }
+
+    // Ejecutar carga inicial al abrir el archivo
+    document.addEventListener('DOMContentLoaded', obtenerUsuarios);
+  </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
