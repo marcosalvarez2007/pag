@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SaaS Dashboard - Registro de Usuarios</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Google Fonts para una tipografía premium -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-container">
+    <header class="app-header">
+      <h1>Panel de Control</h1>
+      <p>Gestiona los usuarios de la plataforma en tiempo real</p>
+    </header>
+
+    <main class="app-content">
+      <!-- Sección del Formulario -->
+      <section class="card-section">
+        <div class="card">
+          <h2>Nuevo Usuario</h2>
+          <p class="card-subtitle">Introduce las credenciales para dar de alta en el sistema.</p>
+          
+          <form id="registroForm">
+            <div class="input-group">
+              <label for="nombre">Nombre completo</label>
+              <input type="text" id="nombre" placeholder="Ej. Juan Pérez" required />
+            </div>
+            
+            <div class="input-group">
+              <label for="email">Correo electrónico</label>
+              <input type="email" id="email" placeholder="ejemplo@dominio.com" required />
+            </div>
+            
+            <button type="submit" id="btnSubmit">
+              <span>Agregar Usuario</span>
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Sección de la Tabla -->
+      <section class="table-section">
+        <div class="card table-card">
+          <div class="table-header">
+            <h2>Usuarios Registrados</h2>
+            <span class="badge" id="userCount">0 usuarios</span>
+          </div>
+          
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Email</th>
+                </tr>
+              </thead>
+              <tbody id="usuariosTabla">
+                <!-- Se rellena dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+          
+          <div id="loadingState" class="loading-state hidden">
+            <div class="spinner"></div>
+            <p>Sincronizando con Supabase...</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+-- Crear la tabla de usuarios
+create table usuarios (
+  id bigint generated always as identity primary key,
+  nombre text not null,
+  email text not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Habilitar el sistema de Seguridad a Nivel de Fila (RLS)
+alter table usuarios enable row level security;
+
+-- Crear una política que permita a cualquiera insertar usuarios (necesario para tu formulario público)
+create policy "Permitir inserciones públicas" 
+on usuarios for insert 
+with check (true);
+
+-- Crear una política que permita a cualquiera leer los usuarios (necesario para mostrar la tabla)
+create policy "Permitir lectura pública" 
+on usuarios for select 
+using (true);
