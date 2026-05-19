@@ -466,6 +466,37 @@
       }
     }
 
+
+    // ... Todo tu código anterior de app.js se queda igual (obtenerUsuarios, etc.) ...
+
+/**
+ * Función para escuchar cambios en tiempo real
+ */
+function activarTiempoReal() {
+  supabase
+    .channel('cambios-usuarios') // Nombre interno para el canal de comunicación
+    .on(
+      'postgres_changes', 
+      { 
+        event: '*', // Escucha inserts, updates y deletes
+        schema: 'public', 
+        table: 'usuarios' 
+      }, 
+      (payload) => {
+        console.log('¡Cambio detectado en tiempo real!', payload);
+        // Volvemos a consultar los usuarios automáticamente cuando hay un cambio
+        obtenerUsuarios(); 
+      }
+    )
+    .subscribe();
+}
+
+// Inicializar la aplicación al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+  obtenerUsuarios();     // Carga inicial de los datos existentes
+  activarTiempoReal();   // Activa la escucha en vivo
+});
+
     // Limpieza de inputs para evitar ataques de inyección XSS (Seguridad)
     function escapeHTML(str) {
       return str.replace(/[&<>'"]/g, 
